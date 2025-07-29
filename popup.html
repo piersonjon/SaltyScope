@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SaltyScope</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Ensure both html and body can grow naturally with content */
+        html, body {
+            margin: 0;
+            padding: 0;
+            /* Removed overflow-y: hidden here to allow natural sizing */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            padding: 10px; /* Keep internal padding for content */
+            min-width: 480px; /* Increased width to accommodate new layout */
+            /* Removed min-height here to allow auto-sizing */
+            background-color: #f0f2f5;
+            color: #333;
+            border-radius: 8px;
+            /* Removed the outer box-shadow */
+        }
+        .version-info {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 0.9em;
+            font-weight: 400;
+        }
+        .section {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Retained section shadow */
+        }
+        label {
+            /* Default label style, overridden by .form-item-row label */
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        /* General styling for inputs and selects */
+        select, input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #f8f8f8;
+            box-sizing: border-box;
+            /* Removed text-align here to allow specific overrides */
+        }
+        /* Specific right-alignment for text input fields only */
+        input[type="text"] {
+            text-align: right;
+        }
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4L146.2%20209.2%205.4%2069.4c-1.8-1.8-4.7-1.8-6.5%200l-2.7%202.7c-1.8%201.8-1.8%204.7%200%206.5l150%20150c1.8%201.8%204.7%201.8%206.5%200l150-150c1.8-1.8-1.8-4.7-0-6.5l-2.7-2.7c-1.8-1.8-4.8-1.8-6.6-0z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 12px;
+            cursor: pointer;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        /* New styles for aligning label and input group on one line */
+        .form-item-row {
+            display: flex;
+            align-items: center; /* Vertically align label and input group */
+            margin-bottom: 8px; /* Spacing between these rows */
+        }
+        .form-item-row label {
+            flex-shrink: 0; /* Prevent label from shrinking */
+            margin-right: 10px; /* Space between label and input */
+            min-width: 120px; /* Give labels a consistent minimum width */
+            text-align: left; /* Kept left-aligned for the label text */
+            margin-bottom: 0; /* Override default label margin-bottom */
+        }
+        .form-item-row .input-group {
+            flex-grow: 1; /* Allow input group to take remaining space */
+            margin-bottom: 0; /* Override default input-group margin-bottom */
+        }
+        .input-group input {
+            flex-grow: 1;
+        }
+        .input-group select {
+            width: 80px;
+            flex-shrink: 0;
+        }
+
+
+        .fighter-info {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 5px; /* Reduced margin */
+            padding: 3px 0; /* Reduced padding */
+            border-bottom: 1px dashed #eee;
+        }
+        .fighter-info:last-child {
+            border-bottom: none;
+        }
+        .fighter-name-line {
+            font-weight: 600;
+            color: #34495e;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0; /* Reduced margin */
+        }
+        .fighter-elo-display {
+            font-weight: 600;
+            color: #27ae60;
+            font-size: 0.9em;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+
+        .status-message {
+            text-align: center;
+            margin-top: 5px; /* Reduced margin */
+            font-style: italic;
+            color: #7f8c8d;
+        }
+
+        /* Styles for controls */
+        .controls-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            gap: 10px;
+        }
+
+        .checkbox-container {
+            display: block;
+            position: relative;
+            padding-left: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            font-weight: 600;
+            color: #555;
+            min-height: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 18px;
+            width: 18px;
+            background-color: #eee;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+
+        .checkbox-container:hover input ~ .checkmark {
+            background-color: #ccc;
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: #2196F3;
+            border-color: #2196F3;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        /* Adjusted top for better vertical alignment */
+        .checkbox-container .checkmark:after {
+            left: 6px;
+            top: 3px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+
+        .action-button {
+            background-color: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        .action-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .action-button:active {
+            background-color: #2173a3;
+            transform: translateY(0);
+        }
+
+        /* Match Info specific styles */
+        .match-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px; /* Reduced margin */
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #444;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed #eee;
+        }
+        .match-details:last-of-type {
+            border-bottom: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="version-info">SaltyScope v0.6 by GreatAtlas</div>
+
+    <div class="section">
+        <label for="bettingMode">Betting Mode:</label>
+        <select id="bettingMode">
+            <option value="elo">ELO</option>
+            <option value="tiered-elo">Tiered ELO</option>
+            <option value="xp-bet">XP Bet ($1)</option>
+            <option value="disabled">Disabled</option>
+        </select>
+    </div>
+
+    <div class="section">
+        <label>Betting Parameters:</label>
+        <div class="form-item-row">
+            <label for="maxBetValue">Max Bet Value:</label>
+            <div class="input-group">
+                <input type="text" id="maxBetValue" placeholder="Value" inputmode="numeric" pattern="[0-9]*\.?[0-9]*">
+                <select id="maxBetType">
+                    <option value="percentage">%</option>
+                    <option value="dollar">$</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-item-row">
+            <label for="allInThresholdValue">All-In Threshold:</label>
+            <div class="input-group">
+                <input type="text" id="allInThresholdValue" placeholder="Threshold" inputmode="numeric" pattern="[0-9]*\.?[0-9]*">
+                <select id="allInThresholdType">
+                    <option value="percentage">%</option>
+                    <option value="dollar">$</option>
+                </select>
+            </div>
+        </div>
+        <!-- Re-Bet button on its own line -->
+        <div style="margin-top: 10px;">
+            <button id="rebetButton" class="action-button">Re-Bet</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <label>Current Match:</label>
+        <div id="fighter1Info" class="fighter-info">
+            <div class="fighter-name-line">
+                <span class="fighter-name">Fighter 1: N/A</span>
+                <span class="fighter-elo-display">ELO: N/A | Tier ELO: N/A</span>
+            </div>
+        </div>
+        <div id="fighter2Info" class="fighter-info">
+            <div class="fighter-name-line">
+                <span class="fighter-name">Fighter 2: N/A</span>
+                <span class="fighter-elo-display">ELO: N/A | Tier ELO: N/A</span>
+            </div>
+        </div>
+        <!-- New line for Match Tier and Match Mode -->
+        <div class="match-details">
+            <span>Match Tier: <span id="matchTier">N/A</span></span>
+            <span>Mode: <span id="matchMode">N/A</span></span>
+        </div>
+        <div id="bettingStatus" class="status-message">Waiting for match...</div>
+    </div>
+
+    <div class="section">
+        <label>Customizations:</label>
+        <div class="controls-group">
+            <label class="checkbox-container">
+                <input type="checkbox" id="upsetModeCheckbox">
+                <span class="checkmark"></span> Upset Mode
+            </label>
+        </div>
+        <div class="controls-group" style="margin-top: 8px;">
+            <label class="checkbox-container">
+                <input type="checkbox" id="allInTournamentModeCheckbox">
+                <span class="checkmark"></span> All-In During Tournament Mode
+            </label>
+        </div>
+        <div class="controls-group" style="margin-top: 8px;">
+            <label class="checkbox-container">
+                <input type="checkbox" id="betOneDollarExhibitionModeCheckbox">
+                <span class="checkmark"></span> Bet $1 During Exhibition
+            </label>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
